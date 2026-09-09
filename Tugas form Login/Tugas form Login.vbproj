@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>tugas_1__2_</RootNamespace>
+    <RootNamespace>Tugas_form_Login</RootNamespace>
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
