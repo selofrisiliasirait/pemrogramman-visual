@@ -1,0 +1,346 @@
+A. DataGridView dari Array 2 Dimensi
+Gunakan ketika data sudah disimpan di array dan kolom grid dibuat manual melalui Designer.
+Option Strict On
+
+Public Class FrmDariArray
+
+    ' Array 2 dimensi: baris = mahasiswa, kolom = data mahasiswa
+    Private dataMahasiswa(,) As String = {
+        {"231712001", "Andi", "Teknik Informatika", "2023", "3.45"},
+        {"231712002", "Sari", "Sistem Informasi", "2023", "3.80"},
+        {"221712015", "Budi", "Teknik Informatika", "2022", "3.12"}
+    }
+
+    ' Menampilkan data array ke DataGridView
+    Private Sub btnTampilkan_Click(sender As Object, e As EventArgs) Handles btnTampilkan.Click
+
+        dgvMahasiswa.Rows.Clear()  ' Hapus data lama agar tidak dobel
+
+        ' Perulangan luar = baris
+        For i As Integer = 0 To dataMahasiswa.GetUpperBound(0)
+
+            ' Buat satu baris kosong, lalu simpan indeksnya
+            Dim baris As Integer = dgvMahasiswa.Rows.Add()
+
+            ' Perulangan dalam = kolom
+            For j As Integer = 0 To dataMahasiswa.GetUpperBound(1)
+                dgvMahasiswa.Rows(baris).Cells(j).Value = dataMahasiswa(i, j)
+            Next
+
+        Next
+
+        lblJumlah.Text = "Jumlah data: " & dgvMahasiswa.Rows.Count.ToString()
+
+    End Sub
+
+    ' Mengosongkan grid
+    Private Sub btnKosongkan_Click(sender As Object, e As EventArgs) Handles btnKosongkan.Click
+        dgvMahasiswa.Rows.Clear()
+        lblJumlah.Text = "Jumlah data: 0"
+    End Sub
+
+End Class
+
+
+Ingat: GetUpperBound(0) mengambil indeks maksimum baris, sedangkan GetUpperBound(1) mengambil indeks maksimum kolom. Kolom grid harus sudah dibuat di Designer, misalnya colNim, colNama, colJurusan, colAngkatan, dan colIpk.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=====================================================================================================
+B. List(Of Mahasiswa) + BindingSource
+Gunakan ketika setiap baris mewakili satu objek mahasiswa dan grid membuat kolom otomatis dari Public Property.
+
+1. Class Mahasiswa.vb
+Option Strict On
+
+Public Class Mahasiswa
+
+    ' Setiap Property akan menjadi kolom pada DataGridView
+    Public Property Nim As String
+    Public Property Nama As String
+    Public Property Jurusan As String
+    Public Property Angkatan As Integer
+    Public Property Ipk As Decimal
+
+    ' Constructor: mengisi data saat objek dibuat
+    Public Sub New(nim As String, nama As String, jurusan As String,
+                   angkatan As Integer, ipk As Decimal)
+
+        Me.Nim = nim
+        Me.Nama = nama
+        Me.Jurusan = jurusan
+        Me.Angkatan = angkatan
+        Me.Ipk = ipk
+
+    End Sub
+
+End Class
+
+2. Kode inti form
+Option Strict On
+
+Public Class FrmDariList
+
+    ' List menyimpan kumpulan objek mahasiswa
+    Private daftarMahasiswa As New List(Of Mahasiswa)
+
+    Private Sub FrmDariList_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        ' Menambahkan data awal
+        daftarMahasiswa.Add(
+            New Mahasiswa("231712001", "Andi", "Teknik Informatika", 2023, 3.45D))
+
+        daftarMahasiswa.Add(
+            New Mahasiswa("231712002", "Sari", "Sistem Informasi", 2023, 3.8D))
+
+        ' Hubungkan List -> BindingSource -> DataGridView
+        bsMahasiswa.DataSource = daftarMahasiswa
+        dgvMahasiswa.DataSource = bsMahasiswa
+
+        lblJumlah.Text = "Jumlah data: " & bsMahasiswa.Count.ToString()
+
+    End Sub
+
+    Private Sub btnTambah_Click(sender As Object, e As EventArgs) Handles btnTambah.Click
+
+        ' Membaca input
+        Dim nim As String = txtNim.Text.Trim()
+        Dim nama As String = txtNama.Text.Trim()
+        Dim jurusan As String = cboJurusan.Text
+
+        Dim angkatan As Integer
+        Dim ipk As Decimal
+
+        ' Validasi konversi angka
+        If Not Integer.TryParse(txtAngkatan.Text, angkatan) Then
+            MessageBox.Show("Angkatan harus berupa angka.")
+            Return
+        End If
+
+        If Not Decimal.TryParse(txtIpk.Text, ipk) Then
+            MessageBox.Show("IPK harus berupa angka.")
+            Return
+        End If
+
+        ' Buat objek baru
+        Dim baru As New Mahasiswa(nim, nama, jurusan, angkatan, ipk)
+
+        ' Tambahkan lewat BindingSource agar grid diperbarui
+        bsMahasiswa.Add(baru)
+
+        lblJumlah.Text = "Jumlah data: " & bsMahasiswa.Count.ToString()
+
+    End Sub
+
+End Class
+
+
+Catatan: kode inti ini menunjukkan pola tambah data dan konversi angka. Jika soal meminta validasi lengkap seperti NIM unik, isian wajib, angkatan, dan rentang IPK, tambahkan pemeriksaan sesuai ketentuan soal atau gunakan modul validasi yang disediakan dosen.
+C. DataTable + BindingSource + pencarian Filter
+Gunakan ketika data memiliki kolom dengan tipe tertentu dan perlu pencarian atau pengurutan.
+Option Strict On
+
+Public Class FrmDataTable
+
+    Private tabelMahasiswa As DataTable
+
+    Private Sub FrmDataTable_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        ' Membuat tabel di memori
+        tabelMahasiswa = New DataTable("Mahasiswa")
+
+        ' Membuat kolom beserta tipe datanya
+        tabelMahasiswa.Columns.Add("Nim", GetType(String))
+        tabelMahasiswa.Columns.Add("Nama", GetType(String))
+        tabelMahasiswa.Columns.Add("Jurusan", GetType(String))
+        tabelMahasiswa.Columns.Add("Angkatan", GetType(Integer))
+        tabelMahasiswa.Columns.Add("Ipk", GetType(Decimal))
+
+        ' Menambahkan baris sesuai urutan kolom
+        tabelMahasiswa.Rows.Add(
+            "231712001", "Andi", "Teknik Informatika", 2023, 3.45D)
+
+        tabelMahasiswa.Rows.Add(
+            "231712002", "Sari", "Sistem Informasi", 2023, 3.8D)
+
+        tabelMahasiswa.Rows.Add(
+            "221712015", "Budi", "Teknik Informatika", 2022, 3.12D)
+
+        ' Hubungkan DataTable -> BindingSource -> DataGridView
+        bsMahasiswa.DataSource = tabelMahasiswa
+        dgvMahasiswa.DataSource = bsMahasiswa
+
+        PerbaruiJumlah()
+
+    End Sub
+
+    ' Merapikan judul dan format kolom
+    Private Sub btnRapikan_Click(sender As Object, e As EventArgs) Handles btnRapikan.Click
+
+        dgvMahasiswa.Columns("Nim").HeaderText = "NIM"
+        dgvMahasiswa.Columns("Ipk").HeaderText = "IPK"
+
+        ' IPK ditampilkan dua angka desimal
+        dgvMahasiswa.Columns("Ipk").DefaultCellStyle.Format = "N2"
+
+        ' Meratakan isi kolom
+        dgvMahasiswa.Columns("Ipk").DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleRight
+
+        ' Membuat kolom memenuhi lebar grid
+        dgvMahasiswa.AutoSizeColumnsMode =
+            DataGridViewAutoSizeColumnsMode.Fill
+
+    End Sub
+
+    ' Mencari nama atau NIM setiap kali teks berubah
+    Private Sub txtCari_TextChanged(sender As Object, e As EventArgs) Handles txtCari.TextChanged
+
+        Dim kata As String = txtCari.Text.Trim()
+
+        If kata = "" Then
+            ' Kotak pencarian kosong: tampilkan semua data
+            bsMahasiswa.RemoveFilter()
+        Else
+            ' Filter mencari teks yang mengandung kata pencarian
+            ' Catatan: contoh sederhana untuk teks tanpa tanda kutip
+            bsMahasiswa.Filter =
+                "Nama LIKE '%" & kata.Replace("'", "''") &
+                "%' OR Nim LIKE '%" & kata.Replace("'", "''") & "%'"
+        End If
+
+        PerbaruiJumlah()
+
+    End Sub
+
+    Private Sub PerbaruiJumlah()
+        lblJumlah.Text = "Menampilkan " & bsMahasiswa.Count.ToString() &
+                         " dari " & tabelMahasiswa.Rows.Count.ToString() & " data"
+    End Sub
+
+End Class
+
+
+
+D. Pencarian pada List(Of Mahasiswa) dengan For Each
+Gunakan ketika sumber datanya List(Of Mahasiswa), bukan DataTable. Jangan menggunakan BindingSource.Filter untuk pola ini.
+Option Strict On
+
+Public Class FrmCariList
+
+    Private daftarMahasiswa As List(Of Mahasiswa)
+
+    Private Sub FrmCariList_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        ' Membuat data awal
+        daftarMahasiswa = New List(Of Mahasiswa) From {
+            New Mahasiswa("231712001", "Andi", "Teknik Informatika", 2023, 3.45D),
+            New Mahasiswa("231712002", "Sari", "Sistem Informasi", 2023, 3.8D),
+            New Mahasiswa("221712015", "Budi", "Teknik Informatika", 2022, 3.12D)
+        }
+
+        bsMahasiswa.DataSource = daftarMahasiswa
+        dgvMahasiswa.DataSource = bsMahasiswa
+
+        lblJumlah.Text = "Menampilkan " & daftarMahasiswa.Count.ToString() & " data"
+
+    End Sub
+
+    Private Sub txtCari_TextChanged(sender As Object, e As EventArgs) Handles txtCari.TextChanged
+
+        Dim kata As String = txtCari.Text.Trim().ToLower()
+
+        ' List baru untuk menampung hasil pencarian
+        Dim hasil As New List(Of Mahasiswa)
+
+        ' Periksa setiap mahasiswa dalam daftar asli
+        For Each mhs As Mahasiswa In daftarMahasiswa
+
+            ' Cari berdasarkan nama atau NIM
+            If mhs.Nama.ToLower().Contains(kata) OrElse
+               mhs.Nim.Contains(kata) Then
+
+                hasil.Add(mhs)
+
+            End If
+
+        Next
+
+        ' Tampilkan hasil pencarian
+        bsMahasiswa.DataSource = hasil
+
+        lblJumlah.Text = "Menampilkan " & hasil.Count.ToString() &
+                         " dari " & daftarMahasiswa.Count.ToString() & " data"
+
+    End Sub
+
+End Class
+
+
+Saat kotak pencarian kosong, kata menjadi "". Karena teks kosong dianggap cocok oleh Contains(""), semua data akan tampil lagi.
+E. Membuka form dari FrmUtama
+Pola ini dipakai untuk tombol yang membuka form praktik masing-masing.
+' Membuka form Array
+Private Sub btnDariArray_Click(sender As Object, e As EventArgs) Handles btnDariArray.Click
+    Dim frm As New FrmDariArray()
+    frm.ShowDialog()
+End Sub
+
+' Membuka form List
+Private Sub btnDariList_Click(sender As Object, e As EventArgs) Handles btnDariList.Click
+    Dim frm As New FrmDariList()
+    frm.ShowDialog()
+End Sub
+
+' Membuka form DataTable
+Private Sub btnDataTable_Click(sender As Object, e As EventArgs) Handles btnDataTable.Click
+    Dim frm As New FrmDataTable()
+    frm.ShowDialog()
+End Sub
+
+' Membuka form pencarian List
+Private Sub btnCariList_Click(sender As Object, e As EventArgs) Handles btnCariList.Click
+    Dim frm As New FrmCariList()
+    frm.ShowDialog()
+End Sub
+
+
+
+Hafalan cepat sebelum responsi
+Jika soal meminta…	Ingat pola ini
+Menampilkan array ke grid	Rows.Clear() → Rows.Add() → nested loop
+Menghitung jumlah baris	Rows.Count atau bsMahasiswa.Count
+Menghubungkan sumber data	bsMahasiswa.DataSource = sumber
+Menampilkan sumber data	dgvMahasiswa.DataSource = bsMahasiswa
+Menambah objek ke grid terikat	bsMahasiswa.Add(objek)
+Membuat tabel di memori	New DataTable() → Columns.Add() → Rows.Add()
+Merapikan kolom otomatis	Atur Columns(...) sesudah DataSource diisi
+Mencari pada DataTable	bsMahasiswa.Filter
+Menghapus pencarian Filter	bsMahasiswa.RemoveFilter()
+Mencari pada List	For Each → If → hasil.Add()
+Membuka form lain	Dim frm As New NamaForm() → frm.ShowDialog()
+
+Patokan paling penting: Array menggunakan pengisian manual, sedangkan List(Of Class) dan DataTable menggunakan DataSource. Jangan mencampur Rows.Add() dengan grid yang sudah terhubung ke DataSource.

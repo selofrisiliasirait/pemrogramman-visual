@@ -1,0 +1,190 @@
+' ==========================================
+' 1. OPERATOR ARITMATIKA
+' ==========================================
+
+Dim a As Integer = 10
+Dim b As Integer = 3
+
+Dim tambah = a + b       ' Penjumlahan: 13
+Dim kurang = a - b       ' Pengurangan: 7
+Dim kali = a * b         ' Perkalian: 30
+Dim bagi = a / b         ' Pembagian: 3.333...
+Dim sisa = a Mod b       ' Sisa pembagian: 1
+Dim pangkat = a ^ b      ' Pangkat: 1000
+
+
+' ==========================================
+' 2. OPERATOR PERBANDINGAN
+' ==========================================
+
+a = b       ' Sama dengan
+a <> b      ' Tidak sama dengan
+a > b       ' Lebih besar
+a < b       ' Lebih kecil
+a >= b      ' Lebih besar atau sama dengan
+a <= b      ' Lebih kecil atau sama dengan
+
+
+' ==========================================
+' 3. OPERATOR LOGIKA
+' ==========================================
+
+' AND: kedua kondisi harus benar
+If a > 0 AndAlso b > 0 Then
+    MessageBox.Show("Keduanya positif")
+End If
+
+' OR: salah satu kondisi benar sudah cukup
+If a < 0 OrElse b < 0 Then
+    MessageBox.Show("Ada angka negatif")
+End If
+
+' NOT: membalik kondisi
+If Not (a = b) Then
+    MessageBox.Show("Angka berbeda")
+End If
+
+
+' ==========================================
+' 4. OPERATOR PENUGASAN
+' ==========================================
+
+Dim total As Integer = 10
+
+total += 5     ' Sama dengan total = total + 5
+total -= 2     ' Sama dengan total = total - 2
+total *= 3     ' Sama dengan total = total * 3
+total /= 2     ' Sama dengan total = total / 2
+
+
+' ==========================================
+' 5. INCREMENT DAN DECREMENT
+' ==========================================
+
+Dim angka As Integer = 5
+
+angka += 1     ' Menambah angka satu
+angka -= 1     ' Mengurangi angka satu
+
+' ==========================================
+' IF STATEMENT
+' ==========================================
+
+Dim nilai As Integer = Val(txtNilai.Text)
+
+If nilai >= 75 Then
+    MessageBox.Show("Nilai memenuhi batas kelulusan")
+End If
+
+
+' ==========================================
+' IF - ELSE
+' ==========================================
+
+Dim nilai As Integer = Val(txtNilai.Text)
+
+If nilai >= 75 Then
+    MessageBox.Show("Lulus")
+Else
+    MessageBox.Show("Tidak Lulus")
+End If
+
+
+' ==========================================
+' IF - ELSEIF - ELSE
+' ==========================================
+
+Dim nilai As Integer = Val(txtNilai.Text)
+
+If nilai >= 90 Then
+    MessageBox.Show("Grade A")
+ElseIf nilai >= 80 Then
+    MessageBox.Show("Grade B")
+ElseIf nilai >= 70 Then
+    MessageBox.Show("Grade C")
+Else
+    MessageBox.Show("Grade D")
+End If
+
+
+' ==========================================
+' IF - ELSEIF - ELSE
+' ==========================================
+
+Dim nilai As Integer = Val(txtNilai.Text)
+
+If nilai >= 90 Then
+    MessageBox.Show("Grade A")
+ElseIf nilai >= 80 Then
+    MessageBox.Show("Grade B")
+ElseIf nilai >= 70 Then
+    MessageBox.Show("Grade C")
+Else
+    MessageBox.Show("Grade D")
+End If
+
+' ==========================================
+' OPERATOR IF SINGKAT
+' ==========================================
+
+Dim nilai As Integer = Val(txtNilai.Text)
+
+Dim status As String = If(nilai >= 75, "Lulus", "Tidak Lulus")
+If(kondisi, nilai_jika_benar, nilai_jika_salah)
+
+MessageBox.Show(status)
+
+
+' ==========================================
+' VALIDASI INPUT ANGKA
+' ==========================================
+
+Dim nilai As Integer
+
+If Not Integer.TryParse(txtNilai.Text, nilai) Then
+
+    MessageBox.Show("Masukkan angka yang valid!")
+    txtNilai.Focus()
+    Return
+
+End If
+
+' Kode di bawah hanya dijalankan jika input valid.
+MessageBox.Show("Nilai yang dimasukkan: " & nilai.ToString())
+
+
+' ==========================================
+' MENENTUKAN KELULUSAN
+' ==========================================
+
+Private Sub btnProses_Click(sender As Object, e As EventArgs) Handles btnProses.Click
+
+    ' Menyiapkan variabel untuk nilai.
+    Dim nilai As Integer
+
+    ' Memastikan input dapat dibaca sebagai bilangan bulat.
+    If Not Integer.TryParse(txtNilai.Text, nilai) Then
+        MessageBox.Show("Masukkan angka yang valid!")
+        txtNilai.Focus()
+        Return
+    End If
+
+    ' Memastikan nilai berada di antara 0 dan 100.
+    If nilai < 0 OrElse nilai > 100 Then
+        MessageBox.Show("Nilai harus antara 0 sampai 100!")
+        txtNilai.Focus()
+        Return
+    End If
+
+    ' Menentukan status kelulusan.
+    If nilai >= 75 Then
+        MessageBox.Show("Lulus")
+    Else
+        MessageBox.Show("Tidak Lulus")
+    End If
+
+End Sub
+
+
+
+

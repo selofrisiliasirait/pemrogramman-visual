@@ -1,0 +1,219 @@
+============================================================
+CHEATSHEET UJIAN PRAKTIKUM PEMROGRAMAN VISUAL
+VB.NET - WINDOWS FORMS
+Modul 2 sampai Modul 8
+============================================================
+
+CATATAN PENTING
+- Ganti nama kontrol (contoh: TxtNama, BtnTampilkan, LblHasil)
+  agar sesuai dengan nama kontrol di Form milikmu.
+- Letakkan kode event di dalam prosedur event yang sesuai.
+- Jangan menyalin Public Class Form1 atau End Class berulang kali
+  jika file Form.vb sudah memilikinya.
+- Modul berikutnya akan ditambahkan ke file ini.
+
+============================================================
+LOOPING 1 - MODUL 2: KOMPONEN VISUAL
+============================================================
+
+1. KONSEP CEPAT
+- Form      : jendela/wadah utama aplikasi.
+- Button    : tombol untuk menjalankan perintah.
+- Label     : menampilkan teks atau keterangan.
+- TextBox   : tempat pengguna mengetik atau mengedit teks.
+- Event     : kejadian yang menjalankan kode, misalnya tombol diklik.
+- .Text     : membaca atau mengubah teks pada kontrol.
+- .Clear()  : mengosongkan TextBox.
+- Me.Close(): menutup Form yang sedang aktif.
+- MessageBox.Show(): menampilkan kotak pesan.
+- &         : menggabungkan teks/nilai.
+- vbCrLf    : membuat baris baru.
+
+2. TEMPLATE: EVENT TOMBOL
+------------------------------------------------------------
+Private Sub BtnTampilkan_Click(sender As Object, e As EventArgs) Handles BtnTampilkan.Click
+
+    ' Tulis kode yang dijalankan saat tombol diklik di sini.
+
+End Sub
+------------------------------------------------------------
+Gunakan template ini untuk event klik tombol. Sesuaikan nama
+BtnTampilkan dengan nama tombol pada Form.
+
+3. MENAMPILKAN PESAN SEDERHANA
+------------------------------------------------------------
+MessageBox.Show("Halo Selamat Datang!")
+------------------------------------------------------------
+
+4. MEMBACA INPUT TEXTBOX
+------------------------------------------------------------
+Dim nama As String = TxtNama.Text
+Dim nim As String = TxtNim.Text
+Dim kom As String = TxtKom.Text
+------------------------------------------------------------
+String berarti tipe data teks. Ganti nama kontrol sesuai Form.
+
+5. MENAMPILKAN BEBERAPA INPUT DALAM SATU MESSAGEBOX
+------------------------------------------------------------
+Private Sub BtnTampilkan_Click(sender As Object, e As EventArgs) Handles BtnTampilkan.Click
+
+    ' Menampilkan data dari tiga TextBox dalam beberapa baris.
+    MessageBox.Show("Halo Selamat Datang!" & vbCrLf &
+                    "Nama : " & TxtNama.Text & vbCrLf &
+                    "NIM  : " & TxtNim.Text & vbCrLf &
+                    "Kom  : " & TxtKom.Text)
+
+End Sub
+------------------------------------------------------------
+Kunci:
+- Teks di dalam tanda kutip adalah tulisan tetap.
+- TxtNama.Text mengambil isi TextBox.
+- & menggabungkan tulisan dan isi TextBox.
+- vbCrLf membuat baris baru.
+
+6. MENAMPILKAN INPUT KE LABEL
+------------------------------------------------------------
+Private Sub BtnTampilkan_Click(sender As Object, e As EventArgs) Handles BtnTampilkan.Click
+
+    ' Menampilkan isi TxtNama ke Label.
+    LblHasil.Text = "Halo, " & TxtNama.Text
+
+End Sub
+------------------------------------------------------------
+LblHasil harus merupakan nama Label yang benar di Form.
+
+7. MENGHAPUS ISI TEXTBOX
+------------------------------------------------------------
+Private Sub BtnHapus_Click(sender As Object, e As EventArgs) Handles BtnHapus.Click
+
+    ' Mengosongkan isi TextBox.
+    TxtNama.Clear()
+    TxtNim.Clear()
+    TxtKom.Clear()
+
+End Sub
+------------------------------------------------------------
+Tambahkan satu baris .Clear() untuk setiap TextBox yang ingin
+dikosongkan.
+
+8. MENGOSONGKAN TEXTBOX DAN LABEL
+------------------------------------------------------------
+Private Sub BtnHapus_Click(sender As Object, e As EventArgs) Handles BtnHapus.Click
+
+    TxtNama.Clear()
+    TxtNim.Clear()
+    TxtKom.Clear()
+
+    ' Opsional: mengosongkan teks pada Label.
+    LblHasil.Text = ""
+
+End Sub
+------------------------------------------------------------
+
+9. MENUTUP FORM
+------------------------------------------------------------
+Private Sub BtnKeluar_Click(sender As Object, e As EventArgs) Handles BtnKeluar.Click
+
+    ' Menutup Form yang sedang aktif.
+    Me.Close()
+
+End Sub
+------------------------------------------------------------
+
+10. EVENT TEXTCHANGED
+------------------------------------------------------------
+Private Sub TxtNama_TextChanged(sender As Object, e As EventArgs) Handles TxtNama.TextChanged
+
+    ' Label mengikuti teks yang sedang diketik.
+    LblHasil.Text = TxtNama.Text
+
+End Sub
+------------------------------------------------------------
+Event TextChanged berjalan ketika isi TextBox berubah.
+Pastikan LblHasil benar-benar ada di Form.
+
+11. MENGUBAH TEKS LABEL LANGSUNG
+------------------------------------------------------------
+LblHasil.Text = "Data berhasil ditampilkan"
+------------------------------------------------------------
+
+12. MENGATUR PROPERTI DASAR LEWAT KODE
+------------------------------------------------------------
+' Mengubah teks yang terlihat pada Form.
+Me.Text = "Aplikasi Data Mahasiswa"
+
+' Mengubah teks pada tombol.
+BtnTampilkan.Text = "Tampilkan Data"
+
+' Mengubah teks pada Label.
+LblHasil.Text = "Masukkan nama"
+
+' Mengosongkan TextBox.
+TxtNama.Clear()
+------------------------------------------------------------
+Properti juga bisa diatur melalui jendela Properties di Visual
+Studio, tanpa menulis kode.
+
+13. CONTOH LENGKAP SESUAI PRAKTIKUM MODUL 2
+------------------------------------------------------------
+Public Class Form1
+
+    Private Sub BtnTampilkan_Click(sender As Object, e As EventArgs) Handles BtnTampilkan.Click
+
+        ' Mengambil data dari TextBox dan menampilkannya.
+        MessageBox.Show("Halo Selamat Datang!" & vbCrLf &
+                        "Nama : " & TxtNama.Text & vbCrLf &
+                        "NIM  : " & TxtNim.Text & vbCrLf &
+                        "Kom  : " & TxtKom.Text)
+
+    End Sub
+
+    Private Sub BtnHapus_Click(sender As Object, e As EventArgs) Handles BtnHapus.Click
+
+        ' Menghapus semua input.
+        TxtNama.Clear()
+        TxtNim.Clear()
+        TxtKom.Clear()
+
+    End Sub
+
+    Private Sub BtnKeluar_Click(sender As Object, e As EventArgs) Handles BtnKeluar.Click
+
+        ' Menutup Form.
+        Me.Close()
+
+    End Sub
+
+    Private Sub TxtNama_TextChanged(sender As Object, e As EventArgs) Handles TxtNama.TextChanged
+
+        ' Event ini boleh kosong jika tidak diperlukan.
+        ' Contoh: LblHasil.Text = TxtNama.Text
+
+    End Sub
+
+End Class
+------------------------------------------------------------
+PENTING:
+- Contoh lengkap ini mengasumsikan nama kontrol sesuai kode.
+- Jika prosedur event sudah dibuat oleh Visual Studio, isi
+  prosedur yang ada; jangan membuat event duplikat.
+- Pastikan hanya ada satu Public Class Form1 dan End Class
+  dalam struktur file Form.vb.
+
+14. CARA CEPAT MEMILIH KODE SAAT UJIAN
+------------------------------------------------------------
+Soal meminta menampilkan pesan       -> MessageBox.Show(...)
+Soal meminta mengambil input         -> NamaTextBox.Text
+Soal meminta menampilkan ke Label    -> NamaLabel.Text = "..."
+Soal meminta menggabungkan teks      -> gunakan &
+Soal meminta membuat baris baru      -> gunakan vbCrLf
+Soal meminta menghapus input         -> NamaTextBox.Clear()
+Soal meminta menutup Form            -> Me.Close()
+Soal meminta aksi saat tombol diklik -> event Click
+Soal meminta aksi saat teks berubah  -> event TextChanged
+------------------------------------------------------------
+
+AKHIR MODUL 2
+Modul 3 sampai Modul 8 akan ditambahkan ke dokumen yang sama.
+============================================================
+
