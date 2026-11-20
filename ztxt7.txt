@@ -1,0 +1,665 @@
+
+CHEATSHEET UJIAN PRAKTIKUM PEMROGRAMAN VISUAL VB.NET
+MODUL 7 — VALIDASI INPUT, ERROR HANDLING, NAMING CONVENTION
+============================================================
+
+1. NAMING CONVENTION (PENAMAAN KONTROL)
+---------------------------------------
+Ganti properti (Name) kontrol di Properties sebelum membuat event.
+
+Kontrol             Prefix      Contoh
+Form                frm         frmPendaftaran
+Label               lbl         lblNama
+TextBox             txt         txtNama
+Button              btn         btnSimpan
+ComboBox            cbo         cboJurusan
+ListBox             lst         lstMahasiswa
+CheckBox            chk         chkSetuju
+RadioButton         rdo         rdoLakiLaki
+GroupBox            grp         grpDataDiri
+DataGridView        dgv         dgvData
+DateTimePicker      dtp         dtpTanggalLahir
+ErrorProvider       err         errInput
+
+PENTING:
+- Name berbeda dengan Text.
+- Name adalah nama kontrol di kode.
+- Text adalah tulisan yang terlihat di form.
+- Ganti Name sebelum membuat event agar nama event sesuai.
+- Gunakan pola prefix + NamaFungsi, misalnya txtNama dan btnSimpan.
+
+
+2. TIGA JENIS ERROR
+-------------------
+Syntax Error:
+Kesalahan penulisan kode. Contoh: salah menulis tipe data Integer.
+Diperbaiki sebelum program dapat dijalankan.
+
+Runtime Error / Exception:
+Error ketika program berjalan. Contoh: mengubah "abc" menjadi angka.
+Dapat ditangani menggunakan Try...Catch.
+
+Logic Error:
+Program berjalan, tetapi hasilnya salah.
+Dicari dengan menguji program menggunakan data yang diketahui hasilnya.
+
+
+3. KONVERSI TEKS MENJADI ANGKA
+------------------------------
+
+A. CInt
+Mengubah nilai menjadi Integer, tetapi bisa menghasilkan error.
+
+Dim angka As Integer = CInt(txtAngka.Text)
+
+Jika input bukan angka, program dapat mengalami exception.
+
+B. Val
+Mengubah teks menjadi angka, tetapi dapat menghasilkan nilai yang
+tidak sesuai tanpa memberi tahu bahwa input salah.
+
+Dim angka As Double = Val(txtAngka.Text)
+
+Jangan mengandalkan Val untuk validasi input.
+
+C. Integer.TryParse (DISARANKAN)
+Memeriksa apakah input bisa diubah menjadi bilangan bulat.
+
+Dim angka As Integer
+
+If Integer.TryParse(txtAngka.Text, angka) Then
+    MessageBox.Show("Angka valid: " & angka.ToString())
+Else
+    MessageBox.Show("Input harus berupa bilangan bulat.")
+End If
+
+Keterangan:
+- True: konversi berhasil.
+- False: konversi gagal.
+- angka berisi hasil konversi jika berhasil.
+
+Jenis TryParse lainnya:
+Integer.TryParse  = bilangan bulat Integer
+Long.TryParse     = bilangan bulat dengan rentang lebih besar
+Decimal.TryParse  = angka desimal
+Double.TryParse   = angka pecahan
+Date.TryParse     = tanggal
+
+
+4. VALIDASI INPUT ANGKA DAN RENTANG
+-----------------------------------
+Contoh: nilai harus antara 0 sampai 100.
+
+Dim nilai As Integer
+
+If Not Integer.TryParse(txtNilai.Text, nilai) Then
+    MessageBox.Show("Nilai harus berupa angka bulat.")
+    txtNilai.Focus()
+    Return
+End If
+
+If nilai < 0 OrElse nilai > 100 Then
+    MessageBox.Show("Nilai harus 0 sampai 100.")
+    txtNilai.Focus()
+    Return
+End If
+
+MessageBox.Show("Nilai valid: " & nilai.ToString())
+
+Keterangan:
+- Not membalik kondisi.
+- OrElse berarti salah satu kondisi benar sudah cukup.
+- Focus() mengarahkan kursor ke kontrol.
+- Return menghentikan proses jika input tidak valid.
+
+POLA PENTING:
+1. Periksa apakah input bisa dikonversi.
+2. Periksa rentang nilai.
+3. Proses data setelah valid.
+
+
+5. TRY...CATCH...FINALLY
+------------------------
+
+A. Try...Catch
+Digunakan untuk menangani error ketika program berjalan.
+
+Try
+    Dim angka As Integer = Integer.Parse(txtAngka.Text)
+    MessageBox.Show("Angka: " & angka.ToString())
+
+Catch ex As Exception
+    MessageBox.Show("Input tidak valid. Masukkan angka.")
+
+End Try
+
+Keterangan:
+- Try: kode yang mungkin menghasilkan error.
+- Catch: dijalankan jika terjadi exception.
+- ex.Message: pesan error dari exception.
+- End Try: mengakhiri blok penanganan error.
+
+B. Try...Catch...Finally
+Finally selalu dijalankan, baik terjadi error maupun tidak.
+
+Try
+    ' Kode yang mungkin menghasilkan error
+    MessageBox.Show("Proses berhasil.")
+
+Catch ex As Exception
+    MessageBox.Show("Terjadi kesalahan: " & ex.Message)
+
+Finally
+    ' Kode yang harus tetap dijalankan
+    MessageBox.Show("Proses selesai.")
+
+End Try
+
+C. Catch Bertingkat
+Catch yang lebih spesifik harus ditulis terlebih dahulu.
+
+Try
+    Dim angka As Integer = Integer.Parse(txtAngka.Text)
+    Dim hasil As Integer = 1000 \ angka
+
+    MessageBox.Show("Hasil: " & hasil.ToString())
+
+Catch ex As FormatException
+    MessageBox.Show("Input bukan bilangan bulat.")
+
+Catch ex As OverflowException
+    MessageBox.Show("Angka terlalu besar.")
+
+Catch ex As DivideByZeroException
+    MessageBox.Show("Tidak boleh membagi dengan nol.")
+
+Catch ex As Exception
+    MessageBox.Show("Terjadi kesalahan: " & ex.Message)
+
+End Try
+
+Keterangan:
+- FormatException: format teks tidak sesuai.
+- OverflowException: nilai melebihi rentang tipe data.
+- DivideByZeroException: pembagian bilangan bulat dengan nol.
+- Exception: penanganan umum untuk error lainnya.
+- Operator \ digunakan untuk pembagian bilangan bulat.
+
+PENTING:
+Jangan meletakkan Catch ex As Exception paling atas karena
+Catch tersebut dapat menangkap error sebelum Catch yang lebih spesifik.
+
+
+6. VALIDASI INPUT KOSONG
+------------------------
+Contoh: nama wajib diisi.
+
+If txtNama.Text.Trim() = "" Then
+    MessageBox.Show("Nama wajib diisi.")
+    txtNama.Focus()
+    Return
+End If
+
+MessageBox.Show("Nama: " & txtNama.Text.Trim())
+
+Keterangan:
+- Trim() menghapus spasi di awal dan akhir.
+- Return menghentikan proses ketika nama kosong.
+
+
+7. VALIDASI PANJANG DAN DIGIT NIM
+---------------------------------
+Contoh: NIM harus tepat 9 digit angka.
+
+If txtNim.Text.Length <> 9 Then
+    MessageBox.Show("NIM harus tepat 9 digit.")
+    txtNim.Focus()
+    Return
+End If
+
+For Each karakter As Char In txtNim.Text
+    If karakter < "0"c OrElse karakter > "9"c Then
+        MessageBox.Show("NIM hanya boleh berisi angka.")
+        txtNim.Focus()
+        Return
+    End If
+Next
+
+MessageBox.Show("NIM valid.")
+
+Keterangan:
+- Length menghitung jumlah karakter.
+- For Each memeriksa setiap karakter.
+- "0"c sampai "9"c menunjukkan karakter angka.
+- Kode ini memeriksa panjang dan memastikan seluruh karakter digit.
+
+
+8. VALIDASI COMBOBOX
+--------------------
+Contoh: jurusan wajib dipilih.
+
+If cboJurusan.SelectedIndex = -1 Then
+    MessageBox.Show("Pilih jurusan terlebih dahulu.")
+    cboJurusan.Focus()
+    Return
+End If
+
+MessageBox.Show("Jurusan: " & cboJurusan.Text)
+
+Keterangan:
+SelectedIndex = -1 berarti belum ada pilihan yang dipilih.
+
+
+9. VALIDASI DESIMAL / IPK
+-------------------------
+Contoh: IPK harus antara 0,00 sampai 4,00.
+
+Dim ipk As Decimal
+
+If Not Decimal.TryParse(txtIpk.Text, ipk) Then
+    MessageBox.Show("IPK harus berupa angka desimal.")
+    txtIpk.Focus()
+    Return
+End If
+
+If ipk < 0D OrElse ipk > 4D Then
+    MessageBox.Show("IPK harus 0 sampai 4.")
+    txtIpk.Focus()
+    Return
+End If
+
+MessageBox.Show("IPK valid: " & ipk.ToString())
+
+CATATAN:
+- Decimal cocok untuk nilai desimal seperti IPK.
+- 0D dan 4D adalah literal bertipe Decimal.
+- Pemisah desimal koma atau titik dapat dipengaruhi pengaturan
+  bahasa Windows. Untuk menerima keduanya secara konsisten,
+  gunakan fungsi CobaDesimal pada bagian 10.
+
+
+10. FUNGSI BANTU VALIDASI
+-------------------------
+Fungsi berikut bisa ditempatkan di Module bernama ModValidasi.vb.
+
+Imports System.Globalization
+
+Public Module ModValidasi
+
+    ' Memeriksa apakah teks kosong atau hanya spasi.
+    Public Function Kosong(teks As String) As Boolean
+        Return teks.Trim() = ""
+    End Function
+
+    ' Memastikan panjang teks sesuai dan semuanya angka 0-9.
+    Public Function SemuaDigit(teks As String,
+                              panjang As Integer) As Boolean
+
+        If teks.Length <> panjang Then Return False
+
+        For Each karakter As Char In teks
+            If karakter < "0"c OrElse karakter > "9"c Then
+                Return False
+            End If
+        Next
+
+        Return True
+    End Function
+
+    ' Menerima koma atau titik sebagai pemisah desimal.
+    Public Function CobaDesimal(teks As String,
+                               ByRef hasil As Decimal) As Boolean
+
+        Dim teksTitik As String = teks.Trim().Replace(",", ".")
+
+        Return Decimal.TryParse(
+            teksTitik,
+            NumberStyles.AllowDecimalPoint,
+            CultureInfo.InvariantCulture,
+            hasil
+        )
+    End Function
+
+End Module
+
+Contoh penggunaan dari Form:
+
+If Kosong(txtNama.Text) Then
+    MessageBox.Show("Nama wajib diisi.")
+    Return
+End If
+
+If Not SemuaDigit(txtNim.Text, 9) Then
+    MessageBox.Show("NIM harus 9 digit angka.")
+    Return
+End If
+
+Dim ipk As Decimal
+
+If Not CobaDesimal(txtIpk.Text, ipk) Then
+    MessageBox.Show("Format IPK salah.")
+    Return
+End If
+
+Keterangan:
+- ByRef memungkinkan fungsi mengisi variabel hasil.
+- Imports System.Globalization digunakan untuk aturan desimal tetap.
+- Module membuat fungsi bisa dipakai oleh beberapa Form.
+
+
+11. ERRORPROVIDER
+-----------------
+ErrorProvider menampilkan ikon error di samping kontrol yang salah.
+
+Pastikan komponen ErrorProvider ditambahkan melalui Toolbox
+dan namanya diubah menjadi errInput.
+
+Menampilkan error:
+errInput.SetError(txtNama, "Nama wajib diisi.")
+
+Menghapus error pada satu kontrol:
+errInput.SetError(txtNama, "")
+
+Menghapus semua error:
+errInput.Clear()
+
+Contoh validasi dengan ErrorProvider:
+
+If txtNama.Text.Trim() = "" Then
+    errInput.SetError(txtNama, "Nama wajib diisi.")
+Else
+    errInput.SetError(txtNama, "")
+End If
+
+Keterangan:
+- Pesan dapat dilihat saat kursor diarahkan ke ikon.
+- Clear() menghapus semua tanda error.
+- ErrorProvider membantu pengguna mengetahui bagian yang salah.
+
+
+12. FUNGSI ValidasiInput()
+--------------------------
+Pola untuk memeriksa beberapa isian sekaligus.
+
+Private Function ValidasiInput() As Boolean
+
+    errInput.Clear()
+    Dim valid As Boolean = True
+
+    If txtNama.Text.Trim() = "" Then
+        errInput.SetError(txtNama, "Nama wajib diisi.")
+        valid = False
+    End If
+
+    Dim angkatan As Integer
+
+    If Not Integer.TryParse(txtAngkatan.Text, angkatan) OrElse
+       angkatan < 2015 OrElse angkatan > Date.Today.Year Then
+
+        errInput.SetError(txtAngkatan,
+                          "Angkatan harus 2015 sampai tahun ini.")
+        valid = False
+    End If
+
+    If Not SemuaDigit(txtNim.Text, 9) Then
+        errInput.SetError(txtNim, "NIM harus 9 digit angka.")
+        valid = False
+    End If
+
+    If cboJurusan.SelectedIndex = -1 Then
+        errInput.SetError(cboJurusan, "Pilih jurusan.")
+        valid = False
+    End If
+
+    Dim ipk As Decimal
+
+    If Not CobaDesimal(txtIpk.Text, ipk) OrElse
+       ipk < 0D OrElse ipk > 4D Then
+
+        errInput.SetError(txtIpk, "IPK harus 0 sampai 4.")
+        valid = False
+    End If
+
+    Return valid
+
+End Function
+
+Keterangan:
+- Clear() menghapus tanda error sebelumnya.
+- valid = False menandai bahwa ada input yang salah.
+- Semua input tetap diperiksa agar semua kesalahan terlihat.
+- Return valid mengembalikan True jika semuanya valid.
+
+
+13. TOMBOL SIMPAN DENGAN VALIDASI
+---------------------------------
+Contoh pola event tombol Simpan:
+
+Private Sub btnSimpan_Click(sender As Object,
+                            e As EventArgs) Handles btnSimpan.Click
+
+    If Not ValidasiInput() Then
+        lblStatus.Text = "Periksa isian yang bertanda merah."
+        Return
+    End If
+
+    ' Jalankan proses penyimpanan setelah semua input valid.
+    lstMahasiswa.Items.Add(
+        txtNim.Text & " | " &
+        txtNama.Text.Trim() & " | " &
+        cboJurusan.Text & " | " &
+        txtAngkatan.Text & " | " &
+        txtIpk.Text
+    )
+
+    lblStatus.Text = "Data berhasil disimpan."
+
+End Sub
+
+Keterangan:
+- Jika validasi gagal, Return menghentikan proses.
+- Jika validasi berhasil, program melanjutkan proses.
+- Pastikan nama kontrol sesuai dengan yang ada di Designer.
+
+
+14. MENCEGAH NIM DUPLIKAT
+-------------------------
+Deklarasikan daftar NIM di dalam Form:
+
+Private ReadOnly daftarNim As New List(Of String)
+
+Tambahkan pemeriksaan pada ValidasiInput():
+
+If Not SemuaDigit(txtNim.Text, 9) Then
+    errInput.SetError(txtNim, "NIM harus 9 digit angka.")
+    valid = False
+
+ElseIf daftarNim.Contains(txtNim.Text) Then
+    errInput.SetError(txtNim, "NIM sudah terdaftar.")
+    valid = False
+End If
+
+Setelah data berhasil disimpan:
+
+daftarNim.Add(txtNim.Text)
+
+Keterangan:
+- Contains() memeriksa apakah NIM sudah ada di List.
+- Add() memasukkan NIM yang baru berhasil disimpan.
+- Tambahkan NIM hanya setelah validasi berhasil.
+
+
+15. EVENT VALIDATING
+--------------------
+Validating digunakan untuk memeriksa input ketika fokus
+meninggalkan suatu kontrol.
+
+Contoh untuk txtNim:
+
+Imports System.ComponentModel
+
+Private Sub txtNim_Validating(sender As Object,
+                              e As CancelEventArgs) Handles txtNim.Validating
+
+    If txtNim.Text = "" Then Return
+
+    If SemuaDigit(txtNim.Text, 9) Then
+        errInput.SetError(txtNim, "")
+    Else
+        errInput.SetError(txtNim, "NIM harus 9 digit angka.")
+    End If
+
+End Sub
+
+Keterangan:
+- Imports System.ComponentModel diperlukan untuk CancelEventArgs.
+- Validating berjalan saat fokus meninggalkan kontrol.
+- Contoh ini tidak menggunakan e.Cancel = True agar pengguna
+  tetap dapat berpindah ke kontrol lain.
+- Validasi utama tetap dilakukan ketika tombol Simpan diklik.
+
+
+16. MEMBERSIHKAN FORM
+---------------------
+Private Sub BersihkanForm()
+
+    txtNim.Clear()
+    txtNama.Clear()
+    txtAngkatan.Clear()
+    txtIpk.Clear()
+
+    cboJurusan.SelectedIndex = -1
+
+    errInput.Clear()
+    txtNim.Focus()
+
+End Sub
+
+Event tombol Bersihkan:
+
+Private Sub btnBersihkan_Click(sender As Object,
+                               e As EventArgs) Handles btnBersihkan.Click
+
+    BersihkanForm()
+    lblStatus.Text = "Form dibersihkan."
+
+End Sub
+
+Keterangan:
+- Clear() mengosongkan TextBox.
+- SelectedIndex = -1 membatalkan pilihan ComboBox.
+- errInput.Clear() menghapus ikon error.
+- Focus() memindahkan kursor ke NIM.
+
+
+17. EKSPOR DATA KE CSV
+----------------------
+CSV adalah file teks yang dapat menyimpan data berbentuk tabel.
+Contoh ini menyimpan data dari ListBox ke folder Documents.
+
+Tambahkan Imports di bagian atas file Form:
+
+Imports System.IO
+
+Contoh event tombol Ekspor:
+
+Private Sub btnEkspor_Click(sender As Object,
+                            e As EventArgs) Handles btnEkspor.Click
+
+    Dim lokasi As String =
+        Path.Combine(
+            Environment.GetFolderPath(
+                Environment.SpecialFolder.MyDocuments),
+            "data-mahasiswa.csv"
+        )
+
+    Dim penulis As StreamWriter = Nothing
+
+    Try
+        penulis = New StreamWriter(lokasi)
+
+        For Each baris As Object In lstMahasiswa.Items
+            penulis.WriteLine(baris.ToString().Replace(" | ", ";"))
+        Next
+
+        lblStatus.Text = "Data berhasil diekspor ke " & lokasi
+
+    Catch ex As IOException
+        MessageBox.Show("File tidak bisa ditulis atau sedang digunakan.")
+
+    Catch ex As UnauthorizedAccessException
+        MessageBox.Show("Tidak memiliki izin untuk menulis file.")
+
+    Finally
+        If penulis IsNot Nothing Then
+            penulis.Close()
+        End If
+    End Try
+
+End Sub
+
+Keterangan:
+- StreamWriter menulis teks ke file.
+- WriteLine() menulis satu baris.
+- Replace() mengganti pemisah dengan titik koma.
+- IOException dapat muncul saat file tidak bisa diakses.
+- UnauthorizedAccessException dapat muncul jika tidak memiliki izin.
+- Finally memastikan penulis ditutup jika sudah berhasil dibuat.
+- Impor System.IO diperlukan untuk operasi file.
+
+
+18. KAPAN MENGGUNAKAN TRY...CATCH?
+---------------------------------
+Gunakan Try...Catch untuk operasi yang bisa gagal saat dijalankan,
+misalnya:
+- Membaca atau menulis file.
+- Mengakses jaringan.
+- Mengakses sumber data yang tidak selalu tersedia.
+- Konversi yang memang berpotensi menghasilkan exception.
+
+Tidak perlu menggunakan Try...Catch hanya untuk menggantikan
+validasi sederhana seperti memeriksa TextBox kosong.
+
+Lebih baik:
+If txtNama.Text.Trim() = "" Then
+    MessageBox.Show("Nama wajib diisi.")
+    Return
+End If
+
+Daripada menangkap semua error untuk kasus input kosong.
+
+
+19. KESALAHAN YANG SERING TERJADI
+---------------------------------
+1. Mengubah Text, padahal yang harus diubah adalah Name.
+2. Menggunakan nama kontrol yang tidak sesuai dengan Designer.
+3. Menggunakan Val untuk memeriksa apakah input valid.
+4. Menggunakan TryParse tetapi tidak memeriksa rentang nilai.
+5. Menampilkan Catch kosong sehingga error tersembunyi.
+6. Menaruh Catch Exception sebelum Catch yang lebih spesifik.
+7. Lupa menghapus ikon ErrorProvider setelah input diperbaiki.
+8. Tidak menggunakan Return ketika validasi gagal.
+9. Lupa menutup StreamWriter di Finally.
+10. Memproses input sebelum validasi selesai.
+
+
+RINGKASAN CEPAT
+---------------
+Nama kontrol             : txtNama, btnSimpan, cboJurusan
+Input kosong             : txtNama.Text.Trim() = ""
+Konversi angka aman      : Integer.TryParse()
+Konversi desimal         : Decimal.TryParse()
+Panjang karakter         : txtNim.Text.Length
+Periksa NIM              : SemuaDigit(txtNim.Text, 9)
+Pilihan ComboBox         : cboJurusan.SelectedIndex = -1
+Tangani exception        : Try...Catch
+Jalankan kode terakhir   : Finally
+Hentikan proses          : Return
+Tampilkan ikon error     : errInput.SetError()
+Hapus semua ikon         : errInput.Clear()
+Periksa data duplikat    : daftarNim.Contains()
+Tambahkan ke List        : daftarNim.Add()
+Bersihkan TextBox        : txtNama.Clear()
+Ekspor file              : StreamWriter + Try...Catch...Finally
+============================================================
+AKHIR CHEATSHEET MODUL 7

@@ -1,0 +1,6 @@
+SYARAT:
+1. bentuk .exe 
+2. database online
+3. multiple user
+4. tema bebas tapi ga seederhana. lengkap kayak inventoris data barang
+5. 

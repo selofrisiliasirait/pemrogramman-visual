@@ -1,0 +1,288 @@
+
+CHEATSHEET UJIAN PRAKTIKUM PEMROGRAMAN VISUAL VB.NET
+MODUL 5 — MODULE, FUNCTION, ARRAY, DAN COLLECTION
+==================================================
+
+1. MODULE
+---------
+Module digunakan untuk menyimpan kode yang bisa dipakai dari Form
+atau bagian program lain.
+
+Contoh:
+Module ModUmum
+
+    Public Sub TampilkanPesan(nama As String)
+        MessageBox.Show("Halo " & nama)
+    End Sub
+
+End Module
+
+Cara memanggil dari Form:
+TampilkanPesan("Selo")
+
+Keterangan:
+- Module: tempat menyimpan kode yang bisa digunakan kembali.
+- Public: bisa diakses dari bagian lain dalam project.
+- Private: hanya bisa diakses dalam lingkup tertentu.
+- Sub: menjalankan perintah tanpa mengembalikan nilai.
+
+
+2. SUB
+------
+Sub digunakan untuk menjalankan perintah tanpa menghasilkan nilai
+yang dikembalikan.
+
+Contoh:
+Public Sub TampilkanPesan(nama As String)
+    MessageBox.Show("Halo " & nama)
+End Sub
+
+Memanggil Sub:
+TampilkanPesan("Budi")
+
+
+3. FUNCTION
+-----------
+Function digunakan untuk menjalankan proses dan mengembalikan nilai
+menggunakan Return.
+
+Contoh Function menghitung luas:
+Public Function HitungLuas(panjang As Integer,
+                           lebar As Integer) As Integer
+    Return panjang * lebar
+End Function
+
+Cara memanggil:
+Dim hasil As Integer
+hasil = HitungLuas(10, 5)
+
+MessageBox.Show(hasil.ToString())
+
+Hasil: 50
+
+Keterangan:
+- As Integer: tipe data hasil berupa bilangan bulat.
+- Return: mengembalikan hasil Function.
+- Parameter: nilai yang dikirim ke Function.
+
+
+4. PERBEDAAN SUB DAN FUNCTION
+-----------------------------
+Sub:
+- Menjalankan perintah.
+- Tidak mengembalikan nilai dengan Return.
+- Contoh: menampilkan pesan.
+
+Function:
+- Menghasilkan nilai yang dapat digunakan kembali.
+- Menggunakan Return.
+- Contoh: menghitung luas atau total harga.
+
+
+5. ARRAY SATU DIMENSI
+---------------------
+Array digunakan untuk menyimpan beberapa nilai dengan tipe data
+yang sama dalam satu variabel.
+
+Contoh:
+Dim nilai() As Integer = {50, 60, 70, 80, 90}
+
+Mengakses elemen:
+nilai(0)   ' 50
+nilai(1)   ' 60
+nilai(2)   ' 70
+
+PENTING:
+Indeks Array dimulai dari 0, bukan 1.
+
+Menghitung jumlah elemen:
+nilai.Length
+
+Menampilkan elemen:
+MessageBox.Show(nilai(0).ToString())
+
+Menampilkan semua nilai ke ListBox:
+lstNilai.Items.Clear()
+
+For i As Integer = 0 To nilai.Length - 1
+    lstNilai.Items.Add(nilai(i))
+Next
+
+Keterangan:
+- Length: jumlah elemen Array.
+- nilai(i): mengambil nilai pada indeks i.
+- Items.Add: menambahkan item ke ListBox.
+- Items.Clear: menghapus semua item dalam ListBox.
+
+PERHATIAN:
+lstNilai.Items.Add(i) menampilkan nomor indeks.
+lstNilai.Items.Add(nilai(i)) menampilkan isi Array.
+
+
+6. ARRAY DUA DIMENSI
+--------------------
+Array dua dimensi memiliki baris dan kolom, seperti tabel.
+
+Contoh:
+Dim nilai2D(,) As Integer = {
+    {55, 35, 62},
+    {62, 77, 15},
+    {62, 72, 15}
+}
+
+Mengakses nilai:
+nilai2D(0, 0)   ' 55
+nilai2D(0, 1)   ' 35
+nilai2D(1, 2)   ' 15
+
+Menghitung jumlah baris:
+nilai2D.GetLength(0)
+
+Menghitung jumlah kolom:
+nilai2D.GetLength(1)
+
+Menampilkan seluruh isi:
+For baris As Integer = 0 To nilai2D.GetLength(0) - 1
+    For kolom As Integer = 0 To nilai2D.GetLength(1) - 1
+        lstNilai.Items.Add(nilai2D(baris, kolom))
+    Next
+Next
+
+Keterangan:
+- GetLength(0): jumlah baris.
+- GetLength(1): jumlah kolom.
+- Loop pertama membaca baris.
+- Loop kedua membaca kolom.
+
+
+7. COLLECTION — LIST
+--------------------
+List digunakan untuk menyimpan banyak data dan ukurannya bisa
+bertambah atau berkurang.
+
+Contoh:
+Dim daftarNilai As New List(Of Integer)
+
+Menambahkan data:
+daftarNilai.Add(80)
+daftarNilai.Add(90)
+daftarNilai.Add(75)
+
+Mengakses data:
+MessageBox.Show(daftarNilai(0).ToString())
+
+Menghapus berdasarkan nilai:
+daftarNilai.Remove(90)
+
+Menghapus berdasarkan indeks:
+daftarNilai.RemoveAt(0)
+
+Menghapus semua data:
+daftarNilai.Clear()
+
+Menghitung jumlah data:
+daftarNilai.Count
+
+Menampilkan semua data:
+For Each nilaiItem As Integer In daftarNilai
+    lstNilai.Items.Add(nilaiItem)
+Next
+
+Keterangan:
+- Add: menambah data.
+- Remove: menghapus data berdasarkan nilainya.
+- RemoveAt: menghapus data berdasarkan indeks.
+- Clear: menghapus seluruh data.
+- Count: menghitung jumlah data.
+- For Each: membaca setiap elemen dalam List.
+
+
+8. PERBEDAAN ARRAY DAN LIST
+---------------------------
+Array:
+- Ukurannya ditentukan saat dibuat.
+- Menggunakan Length untuk menghitung elemen.
+- Contoh: Dim nilai() As Integer = {70, 80, 90}
+
+List:
+- Ukurannya dapat berubah.
+- Bisa menambah dan menghapus elemen.
+- Menggunakan Count untuk menghitung elemen.
+- Contoh: Dim nilai As New List(Of Integer)
+
+
+9. CONTOH PROGRAM ARRAY KE LISTBOX
+----------------------------------
+' Di Module ModArray:
+Public nilai() As Integer = {50, 60, 70, 80, 90}
+
+' Di Form:
+Private Sub btnTampil_Click(sender As Object,
+                            e As EventArgs) Handles btnTampil.Click
+
+    lstNilai.Items.Clear()
+
+    For i As Integer = 0 To nilai.Length - 1
+        lstNilai.Items.Add(nilai(i))
+    Next
+
+End Sub
+
+Pastikan:
+- Nama ListBox adalah lstNilai.
+- Nama Button adalah btnTampil.
+- Array nilai sudah tersedia di Module ModArray.
+- Nama kontrol harus sesuai dengan yang ada di Form.
+
+
+10. CONTOH FUNCTION UNTUK MENGHITUNG
+------------------------------------
+' Di Module ModArray:
+Public Function Hitung(panjang As Integer,
+                       lebar As Integer) As Integer
+
+    If panjang <= 50 Then
+        Return 2 * panjang + 2 * lebar
+    Else
+        Return panjang * lebar
+    End If
+
+End Function
+
+' Di Form:
+Private Sub btnHitung_Click(sender As Object,
+                            e As EventArgs) Handles btnHitung.Click
+
+    Dim panjang As Integer = CInt(txtPanjang.Text)
+    Dim lebar As Integer = CInt(txtLebar.Text)
+
+    Dim hasil As Integer = Hitung(panjang, lebar)
+
+    MessageBox.Show("Hasil: " & hasil.ToString())
+
+End Sub
+
+Catatan:
+CInt mengubah teks menjadi bilangan bulat.
+Pastikan input berisi angka sebelum menggunakan CInt.
+Untuk input yang belum pasti valid, gunakan Integer.TryParse.
+
+
+RINGKASAN CEPAT
+---------------
+Menyimpan kode umum       : Module
+Menjalankan perintah     : Sub
+Menghasilkan nilai       : Function + Return
+Mengambil nilai Array    : nilai(indeks)
+Jumlah elemen Array      : Length
+Jumlah elemen List       : Count
+Menambah data List       : Add()
+Menghapus nilai List     : Remove()
+Menghapus indeks List    : RemoveAt()
+Menghapus semua data     : Clear()
+Membaca semua elemen     : For Each
+Array dua dimensi        : nilai2D(baris, kolom)
+Jumlah baris             : GetLength(0)
+Jumlah kolom             : GetLength(1)
+==================================================
+AKHIR CHEATSHEET MODUL 5
